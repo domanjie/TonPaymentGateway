@@ -1,6 +1,6 @@
 import { useApiFetch, useAuth } from "../context/AuthContext";
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from "recharts";
-import { TrendingUp, CreditCard, AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 export default function Dashboard() {
   const { merchant } = useAuth();

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useApiFetch, useAuth } from "../context/AuthContext";
-import { Plus, Eye, EyeOff, Copy, Check } from "lucide-react";
+import { Plus, Copy, Check } from "lucide-react";
 
 export default function ApiKeys() {
   const { data, loading } = useApiFetch("/api-keys");
