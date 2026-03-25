@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
@@ -19,7 +19,7 @@ interface AuthCtx {
 }
 
 const AuthContext = createContext<AuthCtx>({
-  token: null, merchant: null, login: async () => {}, loading: true, apiUrl: API_URL
+  token: null, merchant: null, login: async () => { }, loading: true, apiUrl: API_URL
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
