@@ -1,0 +1,95 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: ton_pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-ton_payment_gateway}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./backend/api-server/sql/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: ton_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api-server:
+    build:
+      context: ./backend/api-server
+      dockerfile: Dockerfile
+    container_name: ton_api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-3000}:3000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - NODE_ENV=${NODE_ENV:-production}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  blockchain-listener:
+    build:
+      context: ./backend/blockchain-listener
+      dockerfile: Dockerfile
+    container_name: ton_listener
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - TON_RPC_URL=${TON_RPC_URL}
+      - TON_API_KEY=${TON_API_KEY}
+      - TON_NETWORK=${TON_NETWORK:-mainnet}
+      - BLOCKCHAIN_POLL_INTERVAL=${BLOCKCHAIN_POLL_INTERVAL:-10000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  webhook-worker:
+    build:
+      context: ./backend/webhook-worker
+      dockerfile: Dockerfile
+    container_name: ton_webhook
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - WEBHOOK_MAX_RETRIES=${WEBHOOK_MAX_RETRIES:-5}
+      - WEBHOOK_RETRY_BASE_DELAY=${WEBHOOK_RETRY_BASE_DELAY:-1000}
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pg_data:
+  redis_data:

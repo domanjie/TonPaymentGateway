@@ -1,0 +1,17 @@
+{
+  "name": "ton-webhook-worker",
+  "version": "1.0.0",
+  "description": "TonPaymentGateway Webhook Worker",
+  "type": "module",
+  "main": "src/worker.js",
+  "scripts": {
+    "start": "node src/worker.js",
+    "dev": "node --env-file=../../.env src/worker.js"
+  },
+  "dependencies": {
+    "ioredis": "^5.3.2",
+    "pg": "^8.11.5",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  }
+}

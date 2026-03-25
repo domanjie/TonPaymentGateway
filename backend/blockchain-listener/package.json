@@ -1,0 +1,17 @@
+{
+  "name": "ton-blockchain-listener",
+  "version": "1.0.0",
+  "description": "TonPaymentGateway Blockchain Listener",
+  "type": "module",
+  "main": "src/listener.js",
+  "scripts": {
+    "start": "node src/listener.js",
+    "dev": "node --env-file=../../.env src/listener.js"
+  },
+  "dependencies": {
+    "ioredis": "^5.3.2",
+    "pg": "^8.11.5",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
+  }
+}
