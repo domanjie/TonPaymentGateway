@@ -11,12 +11,5 @@
     "install:all": "npm install --prefix backend/api-server && npm install --prefix backend/blockchain-listener && npm install --prefix backend/webhook-worker && npm install --prefix miniapp/telegram-dashboard",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
-  },
-  "workspaces": [
-    "backend/api-server",
-    "backend/blockchain-listener",
-    "backend/webhook-worker",
-    "miniapp/telegram-dashboard",
-    "sdk/js-sdk"
-  ]
+  }
 }
